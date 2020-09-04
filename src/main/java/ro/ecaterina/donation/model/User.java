@@ -1,27 +1,27 @@
 package ro.ecaterina.donation.model;
 
 public class User {
-	 private int id;
-	 private String firstName;
-	 private String lastName;
-	 private String password;
-	 private String phone;
-	 private String email;
-	 private int adressId;
-	 
+	private int id;
+	private String firstName;
+	private String lastName;
+	private String password;
+	private String phone;
+	private String email;
+	private int adressId;
+
 	//Constructori
-	 public User(){};
-	 
-	 
-	 public User(String firstName, String lastName, String password, String phone, String email) {
-		this.firstName = firstName;
+	public User(){};
+
+
+	public User(String lastName, String firstName, String password, String phone, String email) {
 		this.lastName = lastName;
+		this.firstName = firstName;
 		this.password = password;
 		this.phone = phone;
 		this.email = email;
-	
+
 	}
-	 
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone + ", email=" + email + ", adressId=" + adressId + "]";
@@ -70,9 +70,9 @@ public class User {
 	public void setAdressId(int adressId) {
 		this.adressId = adressId;
 	}
-	 
-	
-	
-	 
+
+
+
+
 
 }

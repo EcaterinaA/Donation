@@ -9,13 +9,13 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<%
-		User u1 = (User) request.getAttribute("user");//Am facut cast deoarece getAtribute returna un obiect de tip OBJECT
-	out.println("Utilizatorul cu id-ul " + u1.getId() + " este " + u1);
-	%>
+<%-- 	<% --%>
+// 	User u1 = (User) request.getAttribute("user");//Am facut cast deoarece getAtribute returna un obiect de tip OBJECT
+// 	out.println("Utilizatorul cu id-ul " + u1.getId() + " este " + u1);
+<%-- 	%> --%>
 <br>
 <hr>
-	<table>
+	<table border=1>
 		<tr>
 			<th>Id</th>
 			<th>First Name</th>
@@ -30,6 +30,8 @@
 				<td>${user.lastName}</td>
 				<td>${user.phone}</td>
 				<td>${user.email}</td>
+				<td><a
+				href="${pageContext.request.contextPath}/users?action=stergere&uid=${user.id}">Stergere</a>
 			</tr>
 		</c:forEach>
 
