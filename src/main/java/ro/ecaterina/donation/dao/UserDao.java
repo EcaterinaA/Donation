@@ -6,14 +6,7 @@ import java.util.List;
 import ro.ecaterina.donation.model.User;
 
 public class UserDao {
-	public static final String CONNECTION_STRING="jdbc:mysql://localhost:3306/mydatabase";
-	private Connection conn=null;
-	private PreparedStatement stpReadUser;//pe baza lui se executa interogarile in BD->pentru citire utilizator
-	private PreparedStatement stpReadAllUser;//pentru operatia de citire a tuturor utilizatorilor
-	private PreparedStatement stpCreateUser;//pentru operatia de creare utilizator
-	private PreparedStatement stpUpdateUser;//pentru operatia de modificare utilizator
-	private PreparedStatement stpDeleteUser;//pentru operatia de stergere utilizator
-
+	
 	private static UserDao instance= new UserDao();//se creaza doar o singura instanta la incarcarea clasei in memorie
 
 	private UserDao() { // constructor privat pentru a-l face Singleton		
@@ -24,11 +17,10 @@ public class UserDao {
 	}
 
 	//metoda pentru operatia "READ"-by id
-	public User readUser(int uid){
+	public User readUser(int uid,Connection conn){
 		User u1=new User();
-		try {
-			stpReadUser=conn.prepareStatement("SELECT * FROM users WHERE id= " + uid);//creare conexiune pt fiecare statement corespunzator metodelor CRUD
-			ResultSet rs=stpReadUser.executeQuery();
+		try(PreparedStatement stpReadUser=conn.prepareStatement("SELECT * FROM users WHERE id= " + uid);
+				ResultSet rs=stpReadUser.executeQuery()){
 			if(rs.next()) {
 				u1.setId(rs.getInt("id"));
 				u1.setFirstName(rs.getString("firstName"));
@@ -46,11 +38,10 @@ public class UserDao {
 	}
 
 	//metoda pentru operatia "READ"-all
-	public List<User> readAllUser(){
+	public List<User> readAllUser(Connection conn){
 		List<User> listUser=new ArrayList<User>();
-		try {
-			stpReadAllUser=conn.prepareStatement("SELECT * FROM users");//creez conexiune si atribui interogarea, prepareStatementurile se creeaza cu interogari in ele
-			ResultSet rs = stpReadAllUser.executeQuery();//execut interogarea de sus
+		try(PreparedStatement stpReadAllUser=conn.prepareStatement("SELECT * FROM users");
+				ResultSet rs = stpReadAllUser.executeQuery()) {			
 			while(rs.next()) {
 				User u=new User();
 				u.setId(rs.getInt("id"));
@@ -72,16 +63,19 @@ public class UserDao {
 
 
 	//metoda pentru operatia "UPDATE"
-	public void updateUser(int uid) {
-
+	public boolean updateUser(int uid,Connection conn) {
+		try(PreparedStatement stpUpdateUser=conn.prepareStatement(" ")){	
+		} catch(SQLException e){
+			System.out.println("");
+		}
+		return false;
 	}
 
 	//metoda pentru operatia "DELETE"
-	public boolean deleteUser(int uid) {
+	public boolean deleteUser(int uid,Connection conn) {
 		boolean flag= false;
-		try {
-			String sql="DELETE FROM users WHERE id="+uid;
-			stpDeleteUser=conn.prepareStatement(sql);
+		String sql="DELETE FROM users WHERE id="+uid;
+		try(PreparedStatement stpDeleteUser=conn.prepareStatement(sql);) {
 			stpDeleteUser.executeUpdate();
 			flag=true;
 		}catch(SQLException e) {
@@ -91,13 +85,12 @@ public class UserDao {
 	}
 
 	//metoda pentru operatia "CREATE"
-	public boolean createUser(User user) {
+	public boolean createUser(User user,Connection conn) {
 		boolean flag=false;//nu s-a executat crearea
-		try{
-			String sql="INSERT INTO users (firstName,lastName,password,phone,email)"
-					+ "VALUES('" +user.getFirstName()+"','" + user.getLastName() +"','"+user.getPassword()+"','"+
-					user.getPhone()+"','"+user.getEmail()+"')";
-			stpCreateUser=conn.prepareStatement(sql);
+		String sql="INSERT INTO users (firstName,lastName,password,phone,email)"
+				+ "VALUES('" +user.getFirstName()+"','" + user.getLastName() +"','"+user.getPassword()+"','"+
+				user.getPhone()+"','"+user.getEmail()+"')";
+		try(PreparedStatement stpCreateUser=conn.prepareStatement(sql)){	
 			stpCreateUser.executeLargeUpdate();
 			flag=true;
 		}catch(SQLException e) {
@@ -106,49 +99,8 @@ public class UserDao {
 		return flag;
 	}
 
-	//metoda pentru a deschide conexiunea cu baza de date
-	public boolean openConnection() {
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn= DriverManager.getConnection(CONNECTION_STRING,"root","");//pentru a deschide conexiunea
-			System.out.println("Conectare cu succes la baza de date");
-			return true;
-		}
-		catch(SQLException e){
-			System.out.println("Nu se poate realiza conexiunea la baza de date " + e.getMessage());
-			return false;
-		} 
-		catch (ClassNotFoundException e) {
-			System.out.println("Nu s-a putut incarca driveru-ul Driver ");
-			e.printStackTrace();
-			return false;
-		}
-	}
-	public void closeConnection() {
-		try {
-			if(stpReadUser!=null) {
-				stpReadUser.close();
-			}
-			if(stpReadAllUser!=null) {
-				stpReadAllUser.close();
-			}
-			if(stpCreateUser!=null) {
-				stpCreateUser.close();
-			}
-			if(stpUpdateUser!=null) {
-				stpUpdateUser.close();
-			}
-			if(stpDeleteUser!=null) {
-				stpDeleteUser.close();
-			}
-			if(conn!=null) {
-				conn.close();
-			}
-		}catch (SQLException e) {
-			System.out.println("Nu s-a putut inchide baza de date. ");
-			e.printStackTrace();
-		}
-	}
+	
+
 }
 
 

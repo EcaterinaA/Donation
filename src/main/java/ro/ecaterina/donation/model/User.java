@@ -19,7 +19,6 @@ public class User {
 		this.password = password;
 		this.phone = phone;
 		this.email = email;
-
 	}
 
 	@Override
